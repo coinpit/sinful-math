@@ -65,6 +65,9 @@ describe("sinful-math", function () {
     it("should return NaN when a non-number is passed as an argument", function () {
       assert(isNaN(multiply(6.0985, "x")));
     });
+    it('should do simple multiplications', function(){
+      assert.equal(multiply(0.00125002, 100000000), 125002)
+    })
   });
 
   describe("division", function () {

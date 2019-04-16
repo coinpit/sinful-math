@@ -1,16 +1,16 @@
 ;(function (global) {
   'use strict';
 
-  var liberate = Function.prototype.bind.bind(Function.prototype.call),
-      reduce   = liberate(Array.prototype.reduce);
+  const liberate = Function.prototype.bind.bind(Function.prototype.call),
+        reduce   = liberate(Array.prototype.reduce);
 
   // Computes the multiplier necessary to make x >= 1,
   // effectively eliminating miscalculations caused by
   // finite precision.
 
   function multiplier(x) {
-    var converted = x.toFixed && x < 1e-6 ? x.toFixed(15).replace(/(\..*?)(0+)$/, "$1") : x.toString()
-    var parts     = converted.split('.');
+    const converted = x.toFixed && x < 1e-6 ? x.toFixed(15).replace(/(\..*?)(0+)$/, "$1") : x.toString();
+    const parts = converted.split('.');
 
     if (parts.length < 2) {
       return 1;
@@ -50,13 +50,13 @@
 
   // Math Operations
 
-  var sinfulMath = {
+  const sinfulMath = {
     add: function () {
       if (Array.isArray(arguments[0])) {
         return reduceArray(arguments[0], sinfulMath.add);
       }
 
-      var corrFactor = correctionFactor.apply(null, arguments);
+      const corrFactor = correctionFactor.apply(null, arguments);
 
       function cback(accum, curr, currI, O) {
         return accum + correctedValue(curr, corrFactor);
@@ -70,8 +70,8 @@
         return reduceArray(arguments[0], sinfulMath.sub);
       }
 
-      var corrFactor = correctionFactor.apply(null, arguments),
-          first      = arguments[0];
+      const corrFactor = correctionFactor.apply(null, arguments),
+            first      = arguments[0];
 
       function cback(accum, curr, currI, O) {
         return accum - correctedValue(curr, corrFactor);
@@ -88,9 +88,9 @@
       }
 
       function cback(accum, curr, currI, O) {
-        var corrFactor = correctionFactor(accum, curr);
-
-        return correctedValue(accum, corrFactor) * correctedValue(curr, corrFactor) / (corrFactor * corrFactor);
+        const accumMultiplier = multiplier(accum)
+        const currMultiplier = multiplier(curr)
+        return correctedValue(accum, accumMultiplier) * correctedValue(curr, currMultiplier) / (accumMultiplier * currMultiplier);
       }
 
       return reduce(arguments, cback, 1);
@@ -102,7 +102,7 @@
       }
 
       function cback(accum, curr, currI, O) {
-        var corrFactor = correctionFactor(accum, curr);
+        const corrFactor = correctionFactor(accum, curr);
 
         return correctedValue(accum, corrFactor) / correctedValue(curr, corrFactor);
       }
